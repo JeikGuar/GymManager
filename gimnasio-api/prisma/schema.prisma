@@ -1,0 +1,54 @@
+// prisma/schema.prisma — la fuente de verdad del modelo de datos
+// (es el diagrama de clases del gimnasio, en otra sintaxis)
+// Semana 6: entidades simples, sin relaciones. Las relaciones
+// (Membresia, Pago, Ingreso) llegan en la semana 7.
+
+generator client {
+  provider = "prisma-client"            // cliente moderno de Prisma 7
+  output   = "../src/generated/prisma"  // dónde se genera (no se sube a git)
+}
+
+datasource db {
+  provider = "postgresql"               // la URL vive en prisma7.config.ts → .env
+}
+
+enum EstadoUsuario {
+  ACTIVO
+  INACTIVO
+}
+
+enum EstadoContrato {
+  ACTIVO
+  INACTIVO
+}
+
+model Cliente {
+  id                 Int           @id @default(autoincrement())
+  nombre             String
+  documentoIdentidad String        @unique
+  correo             String        @unique
+  telefono           String?
+  estado             EstadoUsuario @default(ACTIVO)
+  fechaRegistro      DateTime      @default(now())   // lo pone la base, no tu código
+}
+
+model Entrenador {
+  id                 Int            @id @default(autoincrement())
+  nombre             String
+  documentoIdentidad String         @unique
+  correo             String         @unique
+  telefono           String?
+  estado             EstadoUsuario  @default(ACTIVO)
+  especialidad       String
+  fechaContratacion  DateTime       @default(now()) @db.Date
+  estadoContrato     EstadoContrato @default(ACTIVO)
+}
+
+model Plan {
+  id           Int     @id @default(autoincrement())
+  nombre       String  @unique
+  descripcion  String?
+  duracionDias Int
+  precio       Int                       // pesos enteros: nada de flotantes para dinero
+  beneficios   String?
+}

@@ -1,0 +1,136 @@
+@url = http://localhost:3000/api
+
+# ==================== CLIENTES ====================
+
+### Listar todos los clientes
+GET {{url}}/clientes
+
+### Filtrar por estado (ACTIVO | INACTIVO)
+GET {{url}}/clientes?estado=ACTIVO
+
+### Buscar por nombre o documento (sin distinguir mayúsculas)
+GET {{url}}/clientes?buscar=laura
+
+### Obtener un cliente
+GET {{url}}/clientes/1
+
+### Crear cliente
+POST {{url}}/clientes
+Content-Type: application/json
+
+{
+  "nombre": "Juan Pérez",
+  "documentoIdentidad": "1053811999",
+  "correo": "juan@correo.com",
+  "telefono": "3001234567"
+}
+
+### Crear cliente con datos inválidos (400 con detalles)
+POST {{url}}/clientes
+Content-Type: application/json
+
+{ "nombre": "", "documentoIdentidad": "12", "correo": "no-es-correo" }
+
+### Crear cliente con documento repetido (409)
+POST {{url}}/clientes
+Content-Type: application/json
+
+{ "nombre": "Otra", "documentoIdentidad": "1053800111", "correo": "otra@correo.com" }
+
+### Actualizar cliente (PATCH: solo los campos enviados)
+PATCH {{url}}/clientes/1
+Content-Type: application/json
+
+{ "telefono": "3119876543", "estado": "INACTIVO" }
+
+### Id inválido (400)
+GET {{url}}/clientes/abc
+
+### Cliente inexistente (404)
+GET {{url}}/clientes/9999
+
+### Eliminar cliente
+DELETE {{url}}/clientes/3
+
+# ==================== ENTRENADORES ====================
+
+### Listar entrenadores
+GET {{url}}/entrenadores
+
+### Filtrar por contrato y especialidad
+GET {{url}}/entrenadores?estadoContrato=ACTIVO&especialidad=func
+
+### Obtener entrenador
+GET {{url}}/entrenadores/1
+
+### Crear entrenador
+POST {{url}}/entrenadores
+Content-Type: application/json
+
+{
+  "nombre": "Pedro Salazar",
+  "documentoIdentidad": "9876543",
+  "correo": "pedro@gym.com",
+  "telefono": "3201234567",
+  "especialidad": "Crossfit",
+  "fechaContratacion": "2025-01-15"
+}
+
+### Crear entrenador con fecha futura (400)
+POST {{url}}/entrenadores
+Content-Type: application/json
+
+{ "nombre": "X", "documentoIdentidad": "1111111", "correo": "x@gym.com", "especialidad": "Spinning", "fechaContratacion": "2099-01-01" }
+
+### Activar contrato de un entrenador
+PATCH {{url}}/entrenadores/2
+Content-Type: application/json
+
+{ "estadoContrato": "ACTIVO" }
+
+### Eliminar entrenador
+DELETE {{url}}/entrenadores/3
+
+# ==================== PLANES ====================
+
+### Listar planes (ordenados por precio)
+GET {{url}}/planes
+
+### Filtrar por precio máximo y duración mínima
+GET {{url}}/planes?precioMax=250000&duracionMin=30
+
+### Obtener plan
+GET {{url}}/planes/1
+
+### Crear plan (precio en pesos enteros)
+POST {{url}}/planes
+Content-Type: application/json
+
+{
+  "nombre": "Semanal",
+  "descripcion": "Acceso por 7 días",
+  "duracionDias": 7,
+  "precio": 30000,
+  "beneficios": "Zona de pesas"
+}
+
+### Crear plan con nombre repetido (409)
+POST {{url}}/planes
+Content-Type: application/json
+
+{ "nombre": "mensual", "duracionDias": 30, "precio": 80000 }
+
+### Precio con decimales (400: el dinero va en enteros)
+POST {{url}}/planes
+Content-Type: application/json
+
+{ "nombre": "Quincenal", "duracionDias": 15, "precio": 45000.5 }
+
+### Actualizar precio
+PATCH {{url}}/planes/1
+Content-Type: application/json
+
+{ "precio": 95000 }
+
+### Eliminar plan
+DELETE {{url}}/planes/3
